@@ -3,49 +3,80 @@ import CartContext from "./cart-context";
 
 
 const cartReducer = (prevState, action) => {
+
+    //Logic for adding the item to cart dispatcher
     if (action.type === `ADD_TO_CART`) {
-        // if (prevState.items.some(item => item.id === action.item.id)) {
-        //     const updatedItems = [...prevState.items];
-        //     const indexOfItem = updatedItems.findIndex(item => item.id === action.item.id);
+        let updatedItems = [...prevState.items];
 
-        //     const updatedItem = { ...updatedItems[indexOfItem] };
-        //     updatedItem.amount = action.item.amount;
-        //     updatedItems[indexOfItem] = updatedItem;
-        //     return { items: updatedItems, totalAmount: prevState.totalAmount + action.item.price * (updatedItem.amount - prevState.items[indexOfItem].amount) };
-        // }
+        const existingItemIndex = updatedItems.findIndex(item => item.id === action.item.id);
+        const existingItem = updatedItems[existingItemIndex];
+        const updatedTotalAmount = prevState.totalAmount + action.item.amount * action.item.price;
 
-        const updatedTotalAmount = prevState.totalAmount + action.item.price * action.item.amount;
-        const existingItemIndex = prevState.items.findIndex(item => item.id === action.item.id);
-        const existingItem = prevState.items[existingItemIndex];
-        let updatedItems;
         if (existingItem) {
-            const updatedItem = {
-                ...existingItem, amount: existingItem.amount + action.item.amount
-            };
-
-            updatedItems = [...prevState.items];
+            const updatedItem = { ...existingItem, amount: existingItem.amount + 1 };
             updatedItems[existingItemIndex] = updatedItem;
         } else {
-            updatedItems = prevState.items.concat(action.item);
+            updatedItems = updatedItems.concat(action.item);
         }
         return { items: updatedItems, totalAmount: updatedTotalAmount }
-    } else if (action.type === `REMOVE_FROM_CART`) {
-        const existingItemIndex = prevState.items.findIndex(item => item.id === action.id);
-        const existingItem = prevState.items[existingItemIndex];
-        const totalAmount = prevState.totalAmount - existingItem.price;
-        const precisedNum = totalAmount.toPrecision();
-        const num = +precisedNum
-        const numToFixed = num.toFixed(2);
-        let updatedItems;
+    }
+    if (action.type === `REMOVE_FROM_CART`) {
+        let updatedItems = [...prevState.items];
+        const existingItemIndex = updatedItems.findIndex(item => item.id === action.id);
+        const existingItem = updatedItems[existingItemIndex];
+        const updatedTotalAmount = prevState.totalAmount - existingItem.price;
         if (existingItem.amount === 1) {
-            updatedItems = prevState.items.filter(item => item.id !== action.id);
+            updatedItems = updatedItems.filter(item => item.id !== action.id);
         } else {
             const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
-            updatedItems = [...prevState.items];
             updatedItems[existingItemIndex] = updatedItem;
         }
-        return { items: updatedItems, totalAmount: +numToFixed };
+
+        return { items: updatedItems, totalAmount: updatedTotalAmount }
     }
+    // if (action.type === `ADD_TO_CART`) {
+    //     // if (prevState.items.some(item => item.id === action.item.id)) {
+    //     //     const updatedItems = [...prevState.items];
+    //     //     const indexOfItem = updatedItems.findIndex(item => item.id === action.item.id);
+
+    //     //     const updatedItem = { ...updatedItems[indexOfItem] };
+    //     //     updatedItem.amount = action.item.amount;
+    //     //     updatedItems[indexOfItem] = updatedItem;
+    //     //     return { items: updatedItems, totalAmount: prevState.totalAmount + action.item.price * (updatedItem.amount - prevState.items[indexOfItem].amount) };
+    //     // }
+
+    //     const updatedTotalAmount = prevState.totalAmount + action.item.price * action.item.amount;
+    //     const existingItemIndex = prevState.items.findIndex(item => item.id === action.item.id);
+    //     const existingItem = prevState.items[existingItemIndex];
+    //     let updatedItems;
+    //     if (existingItem) {
+    //         const updatedItem = {
+    //             ...existingItem, amount: existingItem.amount + action.item.amount
+    //         };
+
+    //         updatedItems = [...prevState.items];
+    //         updatedItems[existingItemIndex] = updatedItem;
+    //     } else {
+    //         updatedItems = prevState.items.concat(action.item);
+    //     }
+    //     return { items: updatedItems, totalAmount: updatedTotalAmount }
+    // } else if (action.type === `REMOVE_FROM_CART`) {
+    //     const existingItemIndex = prevState.items.findIndex(item => item.id === action.id);
+    //     const existingItem = prevState.items[existingItemIndex];
+    //     const totalAmount = prevState.totalAmount - existingItem.price;
+    //     const precisedNum = totalAmount.toPrecision();
+    //     const num = +precisedNum
+    //     const numToFixed = num.toFixed(2);
+    //     let updatedItems;
+    //     if (existingItem.amount === 1) {
+    //         updatedItems = prevState.items.filter(item => item.id !== action.id);
+    //     } else {
+    //         const updatedItem = { ...existingItem, amount: existingItem.amount - 1 };
+    //         updatedItems = [...prevState.items];
+    //         updatedItems[existingItemIndex] = updatedItem;
+    //     }
+    //     return { items: updatedItems, totalAmount: +numToFixed };
+    // }
 }
 
 const defaultCartState = { items: [], totalAmount: 0 }

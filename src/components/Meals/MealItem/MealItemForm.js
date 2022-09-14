@@ -16,6 +16,7 @@ const MealItemForm = (props) => {
         }
         setAmountIsValid(true);
         props.onAddItem(enteredAmountNumber);
+        amountInputRef.current.value = 0;
 
     }
     return (
